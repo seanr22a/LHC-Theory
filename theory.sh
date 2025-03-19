@@ -73,7 +73,6 @@ do
          fi
      fi
 
-#if [[ ( "$A" -eq "0" || "$B" -ne "0" ) && "$C" -eq "0" ]]; the
      # Check if it is a job using prepare
      if [[ ( "$NOINTEGRATE" -eq "0" && "$NOIDLESTART" -eq "0" ) ]]; then
        IDLESTART=$(awk -v p="Idle:" '$2 == p' $TMPRUNRIVET | head -1 | awk '{print $3}' | sed 's/.$//')
