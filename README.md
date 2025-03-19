@@ -1,15 +1,17 @@
 2025-03-19 22:28 Asia/Bangkok
 
 theory.sh
- 
+
 Status script for LHC Boinc project Theory
 
 Simple bash script to be run in a Linux terminal. It has been tested on Debian 12.
 
-This script shows the status for LHC Theory job currently running in your Boinc client (Currently Linux Boinc client 8.02). 
+
+This script shows the status for LHC Theory job currently running in your Boinc client (Currently Linux Boinc client 8.02).
 It adds info not available in the Boinc client so you know how far each job has come in the calculations.
 
 I will update the terminal copy you can see here as soon as I have a greater variation of jobs running.
+
 
 A short explanation:
 
@@ -27,16 +29,18 @@ Elapsed time - Total absolute time from when Boinc created the job slot until no
 
 Completed % - How many percent of the job that are finished
 
-Err - This column has several functions; 
+Err - This column has several functions;
         - If it shows nothing the job is running and you can se the progress in the Event/Completed columns.
-        
+
         - If it shows * (a star) the job is running but the script can't extract the events from the logfile. In this case
           Processed Events and Remaining events are shown as zero (0).
-          
-        - If it shows Pre, it is preparing the job, not all job has this. As soon it's finished preparing it will clear 
+
+        - If it shows Pre, it is preparing the job, not all job has this. As soon it's finished preparing it will clear
           the Event and Completed numbers and show how many Events it must go processing the job. If it shows Pre2 or
           any higher Pre number the job has multiple Preparation phases.
-        
+
+
+
 --- LHC Theory - pm111 ---- 2025-03-19 22:40:07 ------------------------------------------------------
 
                                      |          Events          |
@@ -50,11 +54,14 @@ Err - This column has several functions;
 
 --- Number of Theory jobs for host pm111: 5 ----------------------------------------------------------
 
+
+
 It's easiest to run the script in a terminal window with watch -n 60 theory.sh
 
 If you think there is something wrong with the job look in /var/lib/boinc-client/slots/{the slot number from the terminal output}/stderr.txt
 
-Many of these jobs can run for a very long time so please do not terminate any jobs - that is bad to the project. If there is something wrong 
+Many of these jobs can run for a very long time so please do not terminate any jobs - that is bad to the project. If there is something wrong
 with the job or your computer isn't fast enough to finish within the timeframe set in Boinc, Boinc will terminate the job automatic.
+
 
 Please see Cern LHC Boinc site https://lhcathome.cern.ch/lhcathome/index.php for everything Boinc related about the project.
