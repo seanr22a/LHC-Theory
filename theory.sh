@@ -1,10 +1,11 @@
 #!/bin/bash
 ############################################
 #
-# 2025-03-19 22:28 Asia/Bangkok
+# 2025-03-20 02:35 Asia/Bangkok
+# seanr22a@hotmail.com
 #
 # theory.sh
-# 
+#
 # Status script for LHC Boinc project Theory
 #
 ############################################
@@ -71,6 +72,29 @@ do
             INTEGRATE=""
             ERR="*"
          fi
+     fi
+
+     # Second try to find events in the log file
+     if [[ "$ERR" == "*" ]]; then
+       ERR=""
+       PROCESSEDEVENT=$(grep "events processed" /tmp/runRivet.log.err | tail -1 | awk -F '\015' '{print $NF}' | awk '{print $1}')
+       # Check so PROCESSEDEVENT is a number
+       if [ -n "$PROCESSEDEVENT" ] && [ "$PROCESSEDEVENT" -eq "$PROCESSEDEVENT" ] 2>/dev/null; then
+         NOINTEGRATE=1
+       else
+         if [ -z "${PROCESSEDEVENT}" ]; then # empty
+           NOINTEGRATE=0
+           NOIDLESTART=0
+         else
+           NOINTEGRATE=1
+           NOIDLESTART=1
+           IDLESTART=""
+           RUNNING=""
+           COMPLETED=""
+           INTEGRATE=""
+           ERR="*"
+         fi
+       fi
      fi
 
      # Check if it is a job using prepare
