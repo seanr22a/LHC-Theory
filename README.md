@@ -53,7 +53,7 @@ Err - This column has several functions;
   Slot                     Job id    Total  Processed   Remaining     Elapsed time  Completed %   Err
 ------------------------------------------------------------------------------------------------------
      4  Theory_2843-4283470-553_1      760        372         388   1 day(s) 12:07         48.9   Pre
-     7  Theory_2843-4266629-527_1      760        748          12   3 day(s) 04:02         98.4   Pre
+     7  Theory_2843-4266629-527_1   100000       1400       98600   3 day(s) 06:13          1.4
     15  Theory_2843-4298132-525_1      600        226         374   1 day(s) 00:50         37.7   Pre2
     22  Theory_2843-4269424-535_2      760        408         352   2 day(s) 18:14         53.7   Pre
     54  Theory_2843-4264765-529_0      760        527         233   2 day(s) 06:22         69.3   Pre
