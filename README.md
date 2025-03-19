@@ -29,8 +29,10 @@ Completed % - How many percent of the job that are finished
 
 Err - This column has several functions; 
         - If it shows nothing the job is running and you can se the progress in the Event/Completed columns.
+        
         - If it shows * (a star) the job is running but the script can't extract the events from the logfile. In this case
-          Processed Events and Remaining events are shown as zero (0),
+          Processed Events and Remaining events are shown as zero (0).
+          
         - If it shows Pre, it is preparing the job, not all job has this. As soon it's finished preparing it will clear 
           the Event and Completed numbers and show how many Events it must go processing the job. If it shows Pre2 or
           any higher Pre number the job has multiple Preparation phases.
