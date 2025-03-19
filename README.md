@@ -14,12 +14,19 @@ I will update the terminal copy you can see here as soon as I have a greater var
 A short explanation:
 
 Slot - The slot Boinc has created for the job. Usually in /var/lib/boinc-client/slots/
+
 Job id - The job identification created by LHC
+
 Total events - Total number of events in the job
+
 Processed events - Number of events finished
+
 Remaining events - Number of events to go before job is finished
+
 Elapsed time - Total absolute time from when Boinc created the job slot until now
+
 Completed % - How many percent of the job that are finished
+
 Err - This column has several functions; 
         - If it shows nothing the job is running and you can se the progress in the Event/Completed columns.
         - If it shows * (a star) the job is running but the script can't extract the events from the logfile. In this case
