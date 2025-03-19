@@ -11,7 +11,7 @@
 
 DATE=$(date +"%Y-%m-%d %H:%M:%S")
 HOST=$(hostname)
-BASEDIR=/var/lib/boinc-client
+BASEDIR=/var/lib/boinc
 ERRLOG=stderr.txt # not used yet in this script, this file is in $BASEDIR/slots/$SLOT/stderr.txt for each job - check if you have problems
 RUNRIVET=cernvm/shared/runRivet.log
 TMPRUNRIVET=/tmp/runRivet.log
