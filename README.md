@@ -1,5 +1,5 @@
 ```text
-2025-03-20 11:22 Asia/Bangkok
+2025-03-20 13:34 Asia/Bangkok
 
 theory.sh
 
@@ -11,10 +11,6 @@ Simple bash script to be run in a Linux terminal. It has been tested on Debian 1
 This script shows the status for LHC Theory job currently running in your Boinc client
 (Currently Linux Boinc client 8.02). It adds info not available in the Boinc client so
 you know how far each job has come in the calculations.
-
-I will update the terminal copy you can see here as soon as I have a greater variation
-of jobs running.
-
 
 A short explanation:
 
@@ -47,18 +43,34 @@ Err - This column has several functions;
 
 
 
---- LHC Theory - pm111 ---- 2025-03-19 22:40:07 ------------------------------------------------------
+--- LHC Theory - pm111 ---- 2025-03-20 13:33:03 ------------------------------------------------------
 
                                      |          Events          |
   Slot                     Job id    Total  Processed   Remaining     Elapsed time  Completed %   Err
 ------------------------------------------------------------------------------------------------------
-     4  Theory_2843-4283470-553_1      760        372         388   1 day(s) 12:07         48.9   Pre
-     7  Theory_2843-4266629-527_1   100000       1400       98600   3 day(s) 06:13          1.4
-    15  Theory_2843-4298132-525_1      600        226         374   1 day(s) 00:50         37.7   Pre2
-    22  Theory_2843-4269424-535_2      760        408         352   2 day(s) 18:14         53.7   Pre
-    54  Theory_2843-4264765-529_0      760        527         233   2 day(s) 06:22         69.3   Pre
+     0  Theory_2843-4285081-529_1   100000       9100       90900   0 day(s) 00:14          9.1
+     4  Theory_2843-4283470-553_1      760        513         247   2 day(s) 03:00         67.5   Pre
+     6  Theory_2843-4233686-637_1   100000      12100       87900   0 day(s) 00:20         12.1
+     7  Theory_2843-4266629-527_1   100000      32100       67900   4 day(s) 18:55         32.1
+     8  Theory_2843-4268236-631_2   100000      11300       88700   0 day(s) 00:40         11.3
+     9  Theory_2843-4215060-636_1   100000      12800       87200   0 day(s) 00:40         12.8
+    10  Theory_2843-4298305-638_0   100000       4400       95600   0 day(s) 00:40          4.4
+    11  Theory_2843-4176419-638_0   100000       5800       94200   0 day(s) 00:40          5.8
+    12  Theory_2843-4167410-530_2   100000       2000       98000   0 day(s) 00:40          2.0
+    13  Theory_2843-4272131-637_1   100000       4100       95900   0 day(s) 00:08          4.1
+    14  Theory_2843-4105059-638_0   100000      98200        1800   0 day(s) 00:06         98.2
+    15  Theory_2843-4138784-637_1   100000       8400       91600   0 day(s) 00:14          8.4
+    16  Theory_2843-4240147-632_2   100000      50100       49900   0 day(s) 00:14         50.1
+    17  Theory_2843-4291709-635_1   100000       8400       91600   0 day(s) 00:14          8.4
+    18  Theory_2843-4289920-636_1   100000       8600       91400   0 day(s) 00:14          8.6
+    19  Theory_2843-4105980-632_2   100000       1800       98200   0 day(s) 00:14          1.8
+    21  Theory_2843-4298935-637_1   100000      16100       83900   0 day(s) 00:14         16.1
+    22  Theory_2843-4269424-535_2      760        534         226   2 day(s) 09:07         70.3   Pre
+    23  Theory_2843-4215627-634_1   100000      10000       90000   0 day(s) 00:14         10.0
+    24  Theory_2843-4202143-634_2   100000      11100       88900   0 day(s) 00:14         11.1
+    54  Theory_2843-4264765-529_0      760        650         110   3 day(s) 21:15         85.5   Pre
 
---- Number of Theory jobs for host pm111: 5 ----------------------------------------------------------
+--- Number of Theory jobs for host pm111: 21 ----------------------------------------------------------
 
 
 
