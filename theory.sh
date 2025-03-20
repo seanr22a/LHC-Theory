@@ -1,7 +1,7 @@
 #!/bin/bash
 ############################################
 #
-# 2025-03-20 02:35 Asia/Bangkok
+# 2025-03-20 14:01 Asia/Bangkok
 # seanr22a@hotmail.com
 #
 # theory.sh
@@ -77,7 +77,7 @@ do
      # Second try to find events in the log file
      if [[ "$ERR" == "*" ]]; then
        ERR=""
-       PROCESSEDEVENT=$(grep "events processed" /tmp/runRivet.log.err | tail -1 | awk -F '\015' '{print $NF}' | awk '{print $1}')
+       PROCESSEDEVENT=$(grep "events processed" $TMPRUNRIVET | tail -1 | awk -F '\015' '{print $NF}' | awk '{print $1}')
        # Check so PROCESSEDEVENT is a number
        if [ -n "$PROCESSEDEVENT" ] && [ "$PROCESSEDEVENT" -eq "$PROCESSEDEVENT" ] 2>/dev/null; then
          NOINTEGRATE=1
