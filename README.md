@@ -41,7 +41,7 @@ Err - This column has several functions;
           are shown as zero (0).
 
         - If it shows Pre, it is preparing the job, not all job has this. As soon it's
-          finished preparing it will clear the Event and Completed numbers and show
+          finished preparing it will clear the Prepare Event and Completed numbers and show
           how many Events it must go processing the job. If it shows Pre2 or any higher
           Pre number the job has multiple Preparation phases.
 
