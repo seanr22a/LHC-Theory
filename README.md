@@ -64,7 +64,7 @@ Err - This column has several functions;
 
 It's easiest to run the script in a terminal window with watch -n 60 theory.sh
 
-If you think there is something wrong with the job look in /var/lib/boinc/slots/{the slot
+If you think there is something wrong with Theory a job look in /var/lib/boinc/slots/{the slot
 number from the terminal output}/stderr.txt
 
 Many of these jobs can run for a very long time so please do not terminate any jobs - that
