@@ -74,4 +74,7 @@ enough to finish within the timeframe set in Boinc, Boinc will terminate the job
 
 Please see Cern LHC Boinc site https://lhcathome.cern.ch/lhcathome/index.php for everything
 Boinc related about the project.
+
+Disclaimer - Please note I'm not affiliated in any way with Cern / LHC.
+I'm retired and doing this of my own interest.
 ```
