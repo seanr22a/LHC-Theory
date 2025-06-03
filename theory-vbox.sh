@@ -1,7 +1,7 @@
 #!/bin/bash
 #################################################
 #
-# 2025-06-20 14:52 Asia/Bangkok
+# 2025-06-03 15:36 Asia/Bangkok
 # seanr22a@hotmail.com
 #
 # theory-vbox.sh
