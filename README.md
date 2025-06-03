@@ -1,12 +1,16 @@
 ```text
-2025-03-20 13:34 Asia/Bangkok
+2025-06-03 15:10 Asia/Bangkok
 
-theory.sh
+theory.sh and theory-vbox.sh
 
 Status script for LHC Boinc project Theory
 
 Simple bash script to be run in a Linux terminal. It has been tested on Debian 12.
 
+There is two versions of this script theory.sh(this is the original intended for native
+theory jobs) and theory-vbox.sh(intended for theory jobs running in vbox). My intention
+is to merge these to one scripts as soon theory-vbox.sh has been tested for a couple of
+weeks and I'm confident it's working as intended.  
 
 This script shows the status for LHC Theory job currently running in your Boinc client
 (Currently Linux Boinc client 8.02). It adds info not available in the Boinc client so
