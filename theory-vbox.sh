@@ -1,7 +1,7 @@
 #!/bin/bash
 #################################################
 #
-# 2026-05-04 21:04 Asia/Bangkok
+# 2026-05-04 21:27 Asia/Bangkok
 # seanr22a@hotmail.com
 #
 # theory-vbox.sh
@@ -48,7 +48,7 @@ do
 
      JOBNAME="Theory_"$(grep -Pom1 '<result_name>Theory_\K[^<]+' $BASEDIR/slots/"$SLOT"/$JOBINPUT)
 
-     TOTALEVENT=$(grep "\[runRivet\]" $TMPRUNRIVET | awk '{print $18}') # | tr -d ']')
+     TOTALEVENT=$(grep "\[runRivet\]" runRivet.log | awk '{print $(NF-1)}')
      if [ -z "${TOTALEVENT}" ]; then
        TOTALEVENT=0
        ERR="*"
