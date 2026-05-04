@@ -1,7 +1,7 @@
 #!/bin/bash
 #################################################
 #
-# 2025-06-03 15:36 Asia/Bangkok
+# 2026-05-04 21:04 Asia/Bangkok
 # seanr22a@hotmail.com
 #
 # theory-vbox.sh
@@ -16,10 +16,10 @@ BASEDIR=/var/lib/boinc
 ERRLOG=stderr.txt # not used yet in this script, this file is in $BASEDIR/slots/$SLOT/stderr.txt for each job - check if you have problems
 RUNRIVET=shared/runRivet.log
 TMPRUNRIVET=/tmp/runRivet.log
-JOBINPUT=shared/init_data.xml
+JOBINPUT=init_data.xml
 
-# Find all Boinc slots
-SLOTLIST=$(ls $BASEDIR/slots | sort -n)
+# Find all Theory Boinc slots
+SLOTLIST=$(grep -r wu_name /var/lib/boinc/slots/*/init_data.xml | grep Theory_ | awk -F'/' '{print $6}' | sort -n)
 
 echo -e "\n"
 echo "--- LHC Theory - $HOST ---- $DATE ------------------------------------------------------"
@@ -30,8 +30,8 @@ echo "--------------------------------------------------------------------------
 
 for SLOT in $SLOTLIST
 do
-  # Check if the slot is a Theory job.
-  if [ -d $BASEDIR/slots/"$SLOT"/shared ] && [ -f $BASEDIR/slots/"$SLOT"/$RUNRIVET ]; then
+  # Check if the slot is active
+  if [ -d $BASEDIR/slots/"$SLOT"/shared ] && [ -f $BASEDIR/slots/"$SLOT"/$RUNRIVET ] && [ -f $BASEDIR/slots/"$SLOT"/boinc_lockfile ]; then
      # Work with a copy of the runRivet.log file to avoid errors if the file is modified during script exec.
      cp $BASEDIR/slots/"$SLOT"/$RUNRIVET $TMPRUNRIVET
      ERR=""
@@ -44,11 +44,11 @@ do
      JOBCURRENT=$(date +"%Y-%m-%d %H:%M:%S")
      diff=$(($(date -d "$JOBCURRENT" +'%s') - $(date -d "$JOBSTART" +'%s')))
      days=$(($(date -d @$diff +'%-j')-1))
-     JOBTIME=$(TZ=GMT date -d @"$diff" +"$days"' day(s) %H:%M')
+     JOBTIME=$(TZ=GMT date -d @"$diff" +"$days"'d  %H:%M')
 
      JOBNAME="Theory_"$(grep -Pom1 '<result_name>Theory_\K[^<]+' $BASEDIR/slots/"$SLOT"/$JOBINPUT)
 
-     TOTALEVENT=$(grep "\[runRivet\]" $TMPRUNRIVET | awk '{print$19}')
+     TOTALEVENT=$(grep "\[runRivet\]" $TMPRUNRIVET | awk '{print $18}') # | tr -d ']')
      if [ -z "${TOTALEVENT}" ]; then
        TOTALEVENT=0
        ERR="*"
