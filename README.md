@@ -1,7 +1,7 @@
 ```text
-2025-06-03 15:37 Asia/Bangkok
+2026-05-05 12:54 Asia/Bangkok
 
-theory.sh and theory-vbox.sh
+theory.sh and theory-vbox.sh !!! theory-vbox works for theory using docker as well !!!
 
 Status script for LHC Boinc project Theory
 
