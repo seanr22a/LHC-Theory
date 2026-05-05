@@ -1,7 +1,7 @@
 #!/bin/bash
 #################################################
 #
-# 2026-05-04 21:27 Asia/Bangkok
+# 2026-05-05 11:38 Asia/Bangkok
 # seanr22a@hotmail.com
 #
 # theory-vbox.sh
@@ -17,9 +17,13 @@ ERRLOG=stderr.txt # not used yet in this script, this file is in $BASEDIR/slots/
 RUNRIVET=shared/runRivet.log
 TMPRUNRIVET=/tmp/runRivet.log
 JOBINPUT=init_data.xml
+CERNVMCOUNTER=0
 
-# Find all Theory Boinc slots
-SLOTLIST=$(grep -r wu_name /var/lib/boinc/slots/*/init_data.xml | grep Theory_ | awk -F'/' '{print $6}' | sort -n)
+# Helper checking if a value is a valid integer
+is_num() { [[ "$1" =~ ^[0-9]+$ ]]; }
+
+# Fins Theory slots
+SLOTLIST=$(grep -r wu_name $BASEDIR/slots/*/init_data.xml | grep Theory_ | awk -F'/' '{print $6}' | sort -n)
 
 echo -e "\n"
 echo "--- LHC Theory - $HOST ---- $DATE ------------------------------------------------------"
@@ -30,127 +34,80 @@ echo "--------------------------------------------------------------------------
 
 for SLOT in $SLOTLIST
 do
-  # Check if the slot is active
-  if [ -d $BASEDIR/slots/"$SLOT"/shared ] && [ -f $BASEDIR/slots/"$SLOT"/$RUNRIVET ] && [ -f $BASEDIR/slots/"$SLOT"/boinc_lockfile ]; then
-     # Work with a copy of the runRivet.log file to avoid errors if the file is modified during script exec.
-     cp $BASEDIR/slots/"$SLOT"/$RUNRIVET $TMPRUNRIVET
-     ERR=""
+    SLOTDIR="$BASEDIR/slots/$SLOT"
 
-     # Keep track of how many theory jobs
-     ((CERNVMCOUNTER++))
+    # Check if the slot is active
+    if [ -d "$SLOTDIR/shared" ] && [ -f "$SLOTDIR/$RUNRIVET" ] && [ -f "$SLOTDIR/boinc_lockfile" ]; then
+        cp "$SLOTDIR/$RUNRIVET" "$TMPRUNRIVET"
+        ((CERNVMCOUNTER++))
+        ERR=""
 
-     # Calculate runtime. This is not cpu time, it's the total time from when the slot was created in Boinc until now.
-     JOBSTART=$(stat --format %w $BASEDIR/slots/"$SLOT"/boinc_lockfile | awk -F'.' '{print $1}')
-     JOBCURRENT=$(date +"%Y-%m-%d %H:%M:%S")
-     diff=$(($(date -d "$JOBCURRENT" +'%s') - $(date -d "$JOBSTART" +'%s')))
-     days=$(($(date -d @$diff +'%-j')-1))
-     JOBTIME=$(TZ=GMT date -d @"$diff" +"$days"'d  %H:%M')
+        # Calculate runtime
+        START_EPOCH=$(stat --format %Y "$SLOTDIR/boinc_lockfile")
+        NOW_EPOCH=$(date +%s)
+        diff=$((NOW_EPOCH - START_EPOCH))
+        days=$((diff / 86400))
+        JOBTIME=$(printf "%dd %02d:%02d" $days $((diff % 86400 / 3600)) $((diff % 3600 / 60)))
 
-     JOBNAME="Theory_"$(grep -Pom1 '<result_name>Theory_\K[^<]+' $BASEDIR/slots/"$SLOT"/$JOBINPUT)
+        # Get Job Name
+        JOBNAME="Theory_"$(grep -Pom1 '<result_name>Theory_\K[^<]+' "$SLOTDIR/$JOBINPUT")
 
-     TOTALEVENT=$(grep "\[runRivet\]" runRivet.log | awk '{print $(NF-1)}')
-     if [ -z "${TOTALEVENT}" ]; then
-       TOTALEVENT=0
-       ERR="*"
-     fi
+        # Use NF-1 logic for total number of events
+        TOTALEVENT=$(grep "\[runRivet\]" "$TMPRUNRIVET" | tail -1 | awk '{print $(NF-1)}' | tr -d '[]')
 
-     # If PROCESSEDEVENT get a number when disable INTEGRATE and IDLESTART
-     PROCESSEDEVENT=$(grep "events processed" $TMPRUNRIVET | tail -1  | awk '/events processed/{print $1;exit}')
-     # Check so PROCESSEDEVENT is a number
-     if [ -n "$PROCESSEDEVENT" ] && [ "$PROCESSEDEVENT" -eq "$PROCESSEDEVENT" ] 2>/dev/null; then
-        NOINTEGRATE=1
-     else
-         if [ -z "${PROCESSEDEVENT}" ]; then # empty
-            NOINTEGRATE=0
-            NOIDLESTART=0
-         else
-            NOINTEGRATE=1
-            NOIDLESTART=1
-            IDLESTART=""
-            RUNNING=""
-            COMPLETED=""
-            INTEGRATE=""
+        if ! is_num "$TOTALEVENT"; then
+            TOTALEVENT=0
             ERR="*"
-         fi
-     fi
+        fi
 
-     # Second try to find events in the log file
-     if [[ "$ERR" == "*" ]]; then
-       ERR=""
-       PROCESSEDEVENT=$(grep "events processed" $TMPRUNRIVET | tail -1 | awk -F '\015' '{print $NF}' | awk '{print $1}')
-       # Check so PROCESSEDEVENT is a number
-       if [ -n "$PROCESSEDEVENT" ] && [ "$PROCESSEDEVENT" -eq "$PROCESSEDEVENT" ] 2>/dev/null; then
-         NOINTEGRATE=1
-       else
-         if [ -z "${PROCESSEDEVENT}" ]; then # empty
-           NOINTEGRATE=0
-           NOIDLESTART=0
-         else
-           NOINTEGRATE=1
-           NOIDLESTART=1
-           IDLESTART=""
-           RUNNING=""
-           COMPLETED=""
-           INTEGRATE=""
-           ERR="*"
-         fi
-       fi
-     fi
+        # Get processed events
+        PROCESSEDEVENT=$(awk '/events processed/ {val=$1} END {print val}' "$TMPRUNRIVET")
 
-     # Check if it is a job using prepare
-     if [[ ( "$NOINTEGRATE" -eq "0" && "$NOIDLESTART" -eq "0" ) ]]; then
-       IDLESTART=$(awk -v p="Idle:" '$2 == p' $TMPRUNRIVET | head -1 | awk '{print $3}' | sed 's/.$//')
-       RUNNING=$(awk -v p="Running:" '$4 == p' $TMPRUNRIVET | tail -1 | awk '{print $5}' | sed 's/.$//')
-       COMPLETED=$(awk -v p="Completed:" '$6 == p' $TMPRUNRIVET | tail -1 | awk '{print $7}')
-       INTEGRATE=$(awk -v p="Integrate" '$1 == p' $TMPRUNRIVET | awk '{last=$0} END{print last}' | sed 's/.$//')
-       if [ -n "$INTEGRATE" ]; then
-         if [ ${INTEGRATE:+1} ]; then
-           # Uses Integrate
-           TOTALEVENT=$(echo "$INTEGRATE" | awk '{print $4}')
-           PROCESSEDEVENT=$(echo "$INTEGRATE" | awk '{print $2}')
-           ERR="Pre "
-         fi
-       else
-         if [ -n "$IDLESTART" ]; then
-           if [ ${IDLESTART:+1} ]; then
-             # Uses Idle/Completed
-             TOTALEVENT=$(("$IDLESTART" + "$RUNNING"))
-             PROCESSEDEVENT="$COMPLETED"
-             ERR=$(grep -c "Completed: 0" $TMPRUNRIVET)
-             if [ "$ERR" -lt "2" ]; then
-               ERR="Pre"
-             else
-               ERR="Pre"$(grep -c "Completed: 0" $TMPRUNRIVET)
-             fi
-           fi
-         fi
-       fi
-     fi
+        # Fallback for "Integrate" or "Pre" phase jobs
+        if ! is_num "$PROCESSEDEVENT" || [ -z "$PROCESSEDEVENT" ]; then
+            INTEGRATE_LINE=$(awk '/Integrate/ {last=$0} END {print last}' "$TMPRUNRIVET")
+            if [ -n "$INTEGRATE_LINE" ]; then
+                PROCESSEDEVENT=$(echo "$INTEGRATE_LINE" | awk '{print $2}')
+                TOTALEVENT=$(echo "$INTEGRATE_LINE" | awk '{print $4}')
+                ERR="Pre "
+            else
+                IDLESTART=$(awk '/Idle:/ {print $3; exit}' "$TMPRUNRIVET" | tr -d ':')
+                if is_num "$IDLESTART"; then
+                    RUNNING=$(awk '/Running:/ {val=$5} END {print val}' "$TMPRUNRIVET" | tr -d ':')
+                    COMPLETED=$(awk '/Completed:/ {val=$7} END {print val}' "$TMPRUNRIVET")
+                    TOTALEVENT=$((IDLESTART + RUNNING))
+                    PROCESSEDEVENT="$COMPLETED"
+                    ERR="Pre"
+                else
+                    PROCESSEDEVENT=0
+                    EVENTTOGO=0
+                    PERCENT=0
+                    ERR="*"
+                fi
+            fi
+        fi
 
-     # Check so PROCESSEDEVENT is a number
-     if [ -n "$PROCESSEDEVENT" ] && [ "$PROCESSEDEVENT" -eq "$PROCESSEDEVENT" ] 2>/dev/null; then
-       if [ "$TOTALEVENT" -ge "$PROCESSEDEVENT" ]; then
-         EVENTTOGO=$(( TOTALEVENT - PROCESSEDEVENT ))
-         PERCENT=$(awk -v a="$PROCESSEDEVENT" -v b="$TOTALEVENT" 'BEGIN {printf("%.1f\n",100*a/b)}')
-       else
-         EVENTTOGO=0
-         PERCENT=0
-         ERR="*"
-       fi
-     else
-       PROCESSEDEVENT=0
-       EVENTTOGO=0
-       PERCENT=0
-       ERR="*"
-     fi
+        # Final check and progress
+        if is_num "$PROCESSEDEVENT" && is_num "$TOTALEVENT" && [ "$TOTALEVENT" -gt 0 ]; then
+            if [ "$TOTALEVENT" -ge "$PROCESSEDEVENT" ]; then
+                EVENTTOGO=$(( TOTALEVENT - PROCESSEDEVENT ))
+                PERCENT=$(awk -v a="$PROCESSEDEVENT" -v b="$TOTALEVENT" 'BEGIN {printf("%.1f", 100*a/b)}')
+            else
+                EVENTTOGO=0; PERCENT="0.0"; ERR="*"
+            fi
+        else
+            # Only set to 0 if not already handled by "Pre" logic
+            [ -z "$PROCESSEDEVENT" ] && PROCESSEDEVENT=0
+            EVENTTOGO=0; PERCENT="0.0"; ERR="*"
+        fi
 
-     printf "%*s%*s%*s%*s%*s%*s%*s%*s\n" 6 "$SLOT" 27 "$JOBNAME" 9 "$TOTALEVENT" 11 "$PROCESSEDEVENT" 12 "$EVENTTOGO" 17 "$JOBTIME" 13 "$PERCENT" 7 "$ERR"
-     rm $TMPRUNRIVET
-  fi
+        printf "%*s%*s%*s%*s%*s%*s%*s%*s\n" 6 "$SLOT" 27 "$JOBNAME" 9 "$TOTALEVENT" 11 "$PROCESSEDEVENT" 12 "$EVENTTOGO" 17 "$JOBTIME" 13 "$PERCENT" 7 "$ERR"
+        rm -f "$TMPRUNRIVET"
+    fi
 done
 
 if (( CERNVMCOUNTER == 0 )); then
-  echo "No Theory job running"
+    echo "No Theory job running"
 fi
 
 echo -e "\n--- Number of Theory jobs for host $HOST: $CERNVMCOUNTER ----------------------------------------------------------"
