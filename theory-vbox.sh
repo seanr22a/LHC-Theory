@@ -1,14 +1,15 @@
 #!/bin/bash
-#################################################
+########################################################
 #
-# 2026-05-05 11:38 Asia/Bangkok
+# 2026-05-17 21:02 Asia/Bangkok
+#
 # seanr22a@hotmail.com
 #
 # theory-vbox.sh
 #
-# Status script for LHC Boinc project Theory/vbox
-#
-#################################################
+# Status script for LHC Boinc project Theory/vbox/docker
+# Please PM me on the LHC forum if something not work ok
+########################################################
 
 DATE=$(date +"%Y-%m-%d %H:%M:%S")
 HOST=$(hostname)
@@ -22,8 +23,16 @@ CERNVMCOUNTER=0
 # Helper checking if a value is a valid integer
 is_num() { [[ "$1" =~ ^[0-9]+$ ]]; }
 
-# Fins Theory slots
-SLOTLIST=$(grep -r wu_name $BASEDIR/slots/*/init_data.xml | grep Theory_ | awk -F'/' '{print $6}' | sort -n)
+# Find Theory slots
+SLOTLIST=$(grep -l "Theory_" $BASEDIR/slots/*/init_data.xml | awk -F'/' '{print $(NF-1)}' | sort -n)
+
+# Check if SLOTLIST is empty
+if [ -z "$SLOTLIST" ]; then
+  SLOTLIST=$(grep -r "Theory_" $BASEDIR/slots/*/init_data.xml | grep slot | awk -F'>' '{print $2}' | awk -F'<' '{print $1}' | sort -n)
+fi
+
+# Uncomment to view docker containers as well
+# docker ps
 
 echo -e "\n"
 echo "--- LHC Theory - $HOST ---- $DATE ------------------------------------------------------"
@@ -37,6 +46,7 @@ do
     SLOTDIR="$BASEDIR/slots/$SLOT"
 
     # Check if the slot is active
+
     if [ -d "$SLOTDIR/shared" ] && [ -f "$SLOTDIR/$RUNRIVET" ] && [ -f "$SLOTDIR/boinc_lockfile" ]; then
         cp "$SLOTDIR/$RUNRIVET" "$TMPRUNRIVET"
         ((CERNVMCOUNTER++))
